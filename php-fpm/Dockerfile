@@ -630,13 +630,15 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
     && apt-get install --no-install-recommends -yqq \
       libaio-dev \
       freetds-dev && \
-    # Install PHP extensions
+    # Install PHP extensions (see options https://pecl.php.net/package/oci8)
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       echo 'instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/' | pecl install oci8-2.0.12; \
     elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
       echo 'instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/' | pecl install oci8-2.2.0; \
     elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
       echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8-3.0.1; \
+    elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+          echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8-3.2.1; \
     else \
       echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8; \
     fi \
@@ -724,7 +726,7 @@ RUN if [ ${INSTALL_GHOSTSCRIPT} = true ]; then \
 ARG INSTALL_LDAP=false
 
 RUN if [ ${INSTALL_LDAP} = true ]; then \
-    apt-get install -yqq libldap2-dev && \
+    apt-get update && apt-get install -yqq libldap2-dev && \
     ARCH=$(arch)   && \
     docker-php-ext-configure ldap --with-libdir="lib/${ARCH}-linux-gnu/" && \
     docker-php-ext-install ldap \
@@ -764,6 +766,10 @@ RUN set -eux; \
         pecl install pdo_sqlsrv-5.6.1 sqlsrv-5.6.1 \
       ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70200" ]; then \
         pecl install pdo_sqlsrv-5.8.1 sqlsrv-5.8.1 \
+      ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70300" ]; then \
+        pecl install pdo_sqlsrv-5.9.0 sqlsrv-5.9.0 \
+      ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70400" ]; then \
+        pecl install pdo_sqlsrv-5.9.0 sqlsrv-5.9.0 \
       ;else \
         pecl install pdo_sqlsrv sqlsrv \
       ;fi \
@@ -796,7 +802,7 @@ ARG IMAGEMAGICK_VERSION=latest
 ENV IMAGEMAGICK_VERSION ${IMAGEMAGICK_VERSION}
 
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -yqq libmagickwand-dev imagemagick && \
+    apt-get update && apt-get install -yqq libmagickwand-dev imagemagick && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
       cd /tmp && \
       if [ ${IMAGEMAGICK_VERSION} = "latest" ]; then \

@@ -308,7 +308,7 @@ RUN set -eux; \
     # LDAP:
     ###########################################################################
     if [ ${INSTALL_LDAP} = true ]; then \
-        apt-get install -yqq libldap2-dev php${LARADOCK_PHP_VERSION}-ldap; \
+        apt-get update && apt-get install -yqq libldap2-dev php${LARADOCK_PHP_VERSION}-ldap; \
     fi; \
     ###########################################################################
     # SMB:
@@ -949,13 +949,15 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
   && apt-get update \
       && apt-get install --no-install-recommends -y \
           libaio-dev && \
-  # Install PHP extensions
+  # Install PHP extensions (see options https://pecl.php.net/package/oci8)
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
   echo 'instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/' | pecl install oci8-2.0.12; \
   elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
   echo 'instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/' | pecl install oci8-2.2.0; \
   elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "80000" ]; then \
     echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8-3.0.1; \
+  elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "80100" ]; then \
+    echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8-3.2.1; \
   else \
     echo "instantclient,/opt/oracle/instantclient_${ORACLE_INSTANT_CLIENT_VERSION}/" | pecl install oci8; \
   fi \
@@ -1110,6 +1112,8 @@ RUN set -eux; \
       ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70200" ]; then \
         pecl install pdo_sqlsrv-5.8.1 sqlsrv-5.8.1 \
       ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70300" ]; then \
+        pecl install pdo_sqlsrv-5.9.0 sqlsrv-5.9.0 \
+      ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70400" ]; then \
         pecl install pdo_sqlsrv-5.9.0 sqlsrv-5.9.0 \
       ;else \
         pecl install pdo_sqlsrv sqlsrv \
