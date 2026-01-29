@@ -1,3 +1,4 @@
+version: '3'
 networks:
   frontend:
     driver: ${NETWORKS_DRIVER}
@@ -183,7 +184,7 @@ services:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - docker-in-docker:/certs/client
         - ./php-worker/supervisord.d:/etc/supervisord.d
-        - ~/.ssh/dev:/root/.ssh
+        - ~/.ssh/dev:/laradock/.ssh
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -445,10 +446,42 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
-        - backend
+        frontend:
+          aliases:
+            # - HOTELAR
+            - hotelar.local
+            - api.hotelar.local
+            - pms-api.hotelar.local
+            # - INPI
+            - inpi-proxy.local
+            # - PGR
+            - apostila.devops
+            - delphi.devops
+            - argus.devops
+            - seclink.devops
+            - polydorus.devops
+            - lending.devops
+            - promp.devops
+            - stico.devops
+        backend:
+          aliases:
+            # - HOTELAR
+            - hotelar.local
+            - api.hotelar.local
+            - pms-api.hotelar.local
+            # - INPI
+            - inpi-proxy.local
+            # - PGR
+            - apostila.devops
+            - delphi.devops
+            - argus.devops
+            - seclink.devops
+            - polydorus.devops
+            - lending.devops
+            - promp.devops
+            - stico.devops
 
-### OpenResty Server #########################################
+  ### OpenResty Server #########################################
     openresty:
       build:
         context: ./openresty
