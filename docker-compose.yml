@@ -452,6 +452,7 @@ services:
             - hotelar.local
             - api.hotelar.local
             - pms-api.hotelar.local
+            - be-api.hotelar.local
             # - INPI
             - inpi-proxy.local
             # - PGR
@@ -469,6 +470,7 @@ services:
             - hotelar.local
             - api.hotelar.local
             - pms-api.hotelar.local
+            - be-api.hotelar.local
             # - INPI
             - inpi-proxy.local
             # - PGR
